@@ -12,15 +12,13 @@ class MeController extends UsersController
     public function __invoke(MeRequest $request): Response
     {
         $params = [
-            'project' => Config::get('app.slug', ''),
+            'project' => Config::get('app.slug', '')
         ];
-        $token_uri = Config::get('hub.base_uri').Config::get('hub.prefix').Config::get('hub.oauth.userinfo_uri').'?'.http_build_query($params);
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Authorization' => $request->headers->get('Authorization'),
-        ])->get(
-            $token_uri
-        );
+        $token_uri = Config::get('hub.base_uri') . Config::get('hub.prefix') . Config::get('hub.oauth.userinfo_uri') . '?' . http_build_query($params);
+        $bearerToken = $request->bearerToken();
+        $response = Http::acceptJson()
+            ->withToken($bearerToken)
+            ->get($token_uri);
 
         return new Response($response, $response->status());
     }
