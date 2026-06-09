@@ -1,5 +1,5 @@
 ### Não se esqueça de adicionar as mudanças na release
-- [Releases](https://github.com/bildvitta/iss-sdk/releases)
+- [Releases](https://github.com/appnave/nave-sdk-iss/releases)
 
 #### Qual problema esse Pull Request aborda?
 

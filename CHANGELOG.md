@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `iss-sdk` will be documented in this file.
+All notable changes to `nave-sdk-iss` will be documented in this file.
 
 ## dev - 2021-04
 
