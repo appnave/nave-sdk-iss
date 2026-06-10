@@ -14,9 +14,9 @@ return new class extends Migration
         $userModel = app(config('hub.model_user'));
         $companyModel = app(config('hub.model_company'));
 
-        Schema::table($userModel->getTable(), function (Blueprint $table) use ($userModel, $companyModel) {
+        Schema::table($userModel->getTable(), function (Blueprint $table) use ($userModel, $companyModel): void {
             if (! Schema::hasColumn($userModel->getTable(), 'main_company_id')) {
-                $table->after('company_id', function ($table) use ($companyModel) {
+                $table->after('company_id', function ($table) use ($companyModel): void {
                     $table->foreignId('main_company_id')
                         ->nullable()
                         ->constrained($companyModel->getTable())
@@ -33,7 +33,7 @@ return new class extends Migration
     {
         $userModel = app(config('hub.model_user'));
 
-        Schema::table($userModel->getTable(), function (Blueprint $table) {
+        Schema::table($userModel->getTable(), function (Blueprint $table): void {
             $table->dropForeign(['main_company_id']);
             $table->dropColumn('main_company_id');
         });

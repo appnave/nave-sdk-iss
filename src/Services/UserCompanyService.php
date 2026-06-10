@@ -14,11 +14,11 @@ class UserCompanyService
 
     private static $positionsByCompany = [];
 
-    const MANAGER = 0;
+    public const MANAGER = 0;
 
-    const SUPERVISOR = 1;
+    public const SUPERVISOR = 1;
 
-    const BROKER = 2;
+    public const BROKER = 2;
 
     public static function clearCacheByUserCompany($userCompany)
     {
@@ -96,10 +96,8 @@ class UserCompanyService
                 self::getAllUserChildrens($userCompanyParents, $onlyPositionOrder);
             }
 
-            return Cache::tags(['UserCompanyService', "User-$parentUserUuid"])->remember($cacheKey, now()->addHour(), function () use ($userModel, $attributes) {
-                return $userModel::whereIn('id', self::$userChildrens)
-                    ->get($attributes);
-            });
+            return Cache::tags(['UserCompanyService', "User-$parentUserUuid"])->remember($cacheKey, now()->addHour(), fn () => $userModel::whereIn('id', self::$userChildrens)
+                ->get($attributes));
         } catch (\Exception $e) {
             report($e);
 
@@ -200,9 +198,7 @@ class UserCompanyService
                 self::$userParents[] = $topUserId;
             }
 
-            return Cache::tags(['UserCompanyService', "User-$userUuid"])->remember($cacheKey, now()->addHour(), function () {
-                return collect(self::$userParents)->reverse();
-            });
+            return Cache::tags(['UserCompanyService', "User-$userUuid"])->remember($cacheKey, now()->addHour(), fn () => collect(self::$userParents)->reverse());
         } catch (\Exception $e) {
             report($e);
 
@@ -272,15 +268,13 @@ class UserCompanyService
         $tableUserCompany = $userCompanyModel->getTable();
 
         if ($attributes && count($attributes)) {
-            $attributes = collect($attributes)->map(function ($item) use ($tableUser) {
-                return $tableUser.'.'.$item;
-            });
+            $attributes = collect($attributes)->map(fn ($item) => $tableUser.'.'.$item);
         }
 
         $users = $userModel::join($tableUserCompany, "{$tableUserCompany}.user_id", "{$tableUser}.id")
             ->where("{$tableUserCompany}.company_id", $company->id)
             ->where("{$tableUserCompany}.position_id", $position['id'])
-            ->when(! $withHubCompanyTrash, function ($query) use ($tableUserCompany) {
+            ->when(! $withHubCompanyTrash, function ($query) use ($tableUserCompany): void {
                 $query->whereNull("{$tableUserCompany}.deleted_at");
             })
             ->select($attributes->toArray())
@@ -294,9 +288,7 @@ class UserCompanyService
 
         $users = $users->get();
 
-        return Cache::tags(['UserCompanyService', "Company-$companyUuid"])->remember($cacheKey, now()->addHour(), function () use ($users) {
-            return $users;
-        });
+        return Cache::tags(['UserCompanyService', "Company-$companyUuid"])->remember($cacheKey, now()->addHour(), fn () => $users);
     }
 
     public static function getSortedPositions($companyUuid)
@@ -390,9 +382,7 @@ class UserCompanyService
             return false;
         }
 
-        return Cache::tags(['UserCompanyService', "User-$companyUuid"])->remember($cacheKey, now()->addHour(), function () use ($userCompany, $position) {
-            return $userCompany->toArray()['position_id'] == $position['id'];
-        });
+        return Cache::tags(['UserCompanyService', "User-$companyUuid"])->remember($cacheKey, now()->addHour(), fn () => $userCompany->toArray()['position_id'] == $position['id']);
 
     }
 
@@ -450,10 +440,8 @@ class UserCompanyService
 
             self::getAllUserParentsByUserCompanyChildren($userCompanyChildren, $onlyPositionOrder);
 
-            return Cache::tags(['UserCompanyService', "User-$userUuid"])->remember($cacheKey, now()->addHour(), function () use ($userModel, $attributes) {
-                return $userModel::whereIn('id', collect(self::$userParents)->pluck('user_id'))
-                    ->get($attributes);
-            });
+            return Cache::tags(['UserCompanyService', "User-$userUuid"])->remember($cacheKey, now()->addHour(), fn () => $userModel::whereIn('id', collect(self::$userParents)->pluck('user_id'))
+                ->get($attributes));
         } catch (\Exception $e) {
             report($e);
 
@@ -506,10 +494,8 @@ class UserCompanyService
                 return collect([]);
             }
 
-            return Cache::tags(['UserCompanyService', "User-$userUuid"])->remember($cacheKey, now()->addHour(), function () use ($userModel, $userParent, $attributes) {
-                return $userModel::where('id', $userParent->id)
-                    ->get($attributes);
-            });
+            return Cache::tags(['UserCompanyService', "User-$userUuid"])->remember($cacheKey, now()->addHour(), fn () => $userModel::where('id', $userParent->id)
+                ->get($attributes));
         } catch (\Exception $e) {
             report($e);
 

@@ -16,32 +16,27 @@ class UserResource extends Resource implements UserResourceContract
     /**
      * @const string
      */
-    private const PREFIX = '/users';
+    private const string PREFIX = '/users';
 
     /**
      * @const string
      */
-    private const ENDPOINT_ME = self::PREFIX.'/me';
+    private const string ENDPOINT_ME = self::PREFIX.'/me';
 
     /**
      * @const string
      */
-    private const ENDPOINT_FIND_BY_UUID = self::PREFIX.'/%s';
+    private const string ENDPOINT_FIND_BY_UUID = self::PREFIX.'/%s';
 
     /**
      * @const string
      */
-    private const ENDPOINT_GET_BY_UUIDS = self::PREFIX;
-
-    private Hub $hub;
+    private const string ENDPOINT_GET_BY_UUIDS = self::PREFIX;
 
     /**
      * UserResource constructor.
      */
-    public function __construct(Hub $hub)
-    {
-        $this->hub = $hub;
-    }
+    public function __construct(private Hub $hub) {}
 
     /**
      * User data token informed.

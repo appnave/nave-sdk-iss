@@ -14,7 +14,7 @@ class PatchController extends NotificationsController
         $params = [
             'project' => Config::get('app.slug', ''),
         ];
-        $token_uri = Config::get('hub.base_uri') . Config::get('hub.prefix') . Config::get('hub.oauth.notifications_uri') . '?' . http_build_query($params);
+        $token_uri = Config::get('hub.base_uri').Config::get('hub.prefix').Config::get('hub.oauth.notifications_uri').'?'.http_build_query($params);
         $response = Http::acceptJson()
             ->withToken($bearerToken)
             ->patch(

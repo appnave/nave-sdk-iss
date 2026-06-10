@@ -9,15 +9,12 @@ use Monolog\Logger;
 
 class SatelliteX9Handler extends AbstractProcessingHandler
 {
-    protected array $config = [];
-
     /**
      * @param  int  $level
      */
-    public function __construct($level = Logger::DEBUG, array $config = [])
+    public function __construct($level = Logger::DEBUG, protected array $config = [])
     {
         parent::__construct($level);
-        $this->config = $config;
     }
 
     /**

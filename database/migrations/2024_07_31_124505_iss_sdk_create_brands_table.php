@@ -10,7 +10,7 @@ return new class extends Migration
     {
         $brandModel = app(config('hub.model_brand'));
 
-        Schema::create($brandModel->getTable(), function (Blueprint $table) {
+        Schema::create($brandModel->getTable(), function (Blueprint $table): void {
             $table->id();
             $table->uuid()->unique();
             $table->string('name');

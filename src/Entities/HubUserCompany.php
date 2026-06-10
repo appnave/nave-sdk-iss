@@ -39,9 +39,7 @@ class HubUserCompany extends Model
 
     public function companyName(): Attribute
     {
-        return Attribute::get(function () {
-            return $this->company->name;
-        });
+        return Attribute::get(fn () => $this->company->name);
     }
 
     public function user(): BelongsTo

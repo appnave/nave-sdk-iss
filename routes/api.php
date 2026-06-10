@@ -10,17 +10,17 @@ use BildVitta\Hub\Http\Controllers\Users\MePatchController;
 use BildVitta\Hub\Http\Controllers\Users\Notifications;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api/auth')->middleware(['throttle'])->group(function () {
+Route::prefix('api/auth')->middleware(['throttle'])->group(function (): void {
     Route::get('login')->name('hub.auth.login')->uses(LoginController::class);
     Route::get('callback')->name('hub.auth.callback')->uses(CallbackController::class);
 
-    Route::middleware('hub.check')->group(function () {
+    Route::middleware('hub.check')->group(function (): void {
         Route::get('logout')->name('hub.auth.logout')->uses(LogoutController::class);
         Route::get('refresh')->name('hub.auth.refresh')->uses(RefreshController::class);
     });
 });
 
-Route::prefix('api/users/')->middleware('hub.check')->group(function () {
+Route::prefix('api/users/')->middleware('hub.check')->group(function (): void {
     Route::get('me')->name('hub.users.me')->uses(MeController::class);
     Route::patch('me')->name('hub.users.me.patch')->uses(MePatchController::class);
     Route::get('me/edit')->name('hub.users.edit')->uses(MeEditController::class);

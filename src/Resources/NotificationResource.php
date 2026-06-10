@@ -11,17 +11,12 @@ class NotificationResource extends Resource
     /**
      * @const string
      */
-    private const PREFIX = 'programmatic/notifications';
-
-    private Hub $hub;
+    private const string PREFIX = 'programmatic/notifications';
 
     /**
      * NotificationResource constructor.
      */
-    public function __construct(Hub $hub)
-    {
-        $this->hub = $hub;
-    }
+    public function __construct(private readonly Hub $hub) {}
 
     public function createNotification(
         array $users,

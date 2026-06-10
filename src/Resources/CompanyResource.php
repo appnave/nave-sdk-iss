@@ -14,22 +14,17 @@ class CompanyResource extends Resource
     /**
      * @const string
      */
-    private const PREFIX = '/programmatic/companies';
+    private const string PREFIX = '/programmatic/companies';
 
     /**
      * @const string
      */
-    private const ENDPOINT_FIND_BY_UUID = self::PREFIX.'/%s';
-
-    private Hub $hub;
+    private const string ENDPOINT_FIND_BY_UUID = self::PREFIX.'/%s';
 
     /**
      * AuthResource constructor.
      */
-    public function __construct(Hub $hub)
-    {
-        $this->hub = $hub;
-    }
+    public function __construct(private Hub $hub) {}
 
     /**
      *  Get all companies in Hub

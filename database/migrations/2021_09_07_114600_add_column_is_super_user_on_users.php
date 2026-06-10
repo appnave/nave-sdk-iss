@@ -10,7 +10,7 @@ class AddColumnIsSuperUserOnUsers extends Migration
     {
         $userModel = app(config('hub.model_user'));
         if (! Schema::hasColumn($userModel->getTable(), 'is_superuser')) {
-            Schema::table($userModel->getTable(), function (Blueprint $table) {
+            Schema::table($userModel->getTable(), function (Blueprint $table): void {
                 $table->boolean('is_superuser')->default(false);
             });
         }
@@ -20,7 +20,7 @@ class AddColumnIsSuperUserOnUsers extends Migration
     {
         $userModel = app(config('hub.model_user'));
         if (Schema::hasColumn($userModel->getTable(), 'is_superuser')) {
-            Schema::table($userModel->getTable(), function (Blueprint $table) {
+            Schema::table($userModel->getTable(), function (Blueprint $table): void {
                 $table->removeColumn('is_superuser');
             });
         }

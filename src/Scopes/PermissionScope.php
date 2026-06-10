@@ -14,16 +14,10 @@ use Illuminate\Support\Facades\Auth;
  */
 class PermissionScope implements Scope
 {
-    protected string $permission;
-
-    protected string $attribute;
-
     protected ?Authenticatable $user;
 
-    public function __construct(string $permission, string $attribute = 'uuid')
+    public function __construct(protected string $permission, protected string $attribute = 'uuid')
     {
-        $this->permission = $permission;
-        $this->attribute = $attribute;
         $this->user = Auth::user();
     }
 
@@ -53,7 +47,7 @@ class PermissionScope implements Scope
         return $this->user->getAllPermissions()
             ->pluck('name')
             ->filter(function ($value) use ($permission) {
-                if (substr($value, 0, strlen($permission)) === $permission) {
+                if (str_starts_with($value, $permission)) {
                     $substr = substr($value, strlen($permission));
                     $substr = ltrim($substr, '.');
                     if (in_array($substr, ['*', 'template'])) {

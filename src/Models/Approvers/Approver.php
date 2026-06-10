@@ -32,14 +32,16 @@ class Approver extends Model
         'type' => Type::class,
     ];
 
+    #[\Override]
     public static function boot(): void
     {
         parent::boot();
-        self::creating(function ($model) {
+        self::creating(function ($model): void {
             $model->uuid = (string) Uuid::uuid4();
         });
     }
 
+    #[\Override]
     public function getRouteKeyName(): string
     {
         return 'uuid';

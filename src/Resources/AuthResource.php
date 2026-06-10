@@ -15,27 +15,22 @@ class AuthResource extends Resource implements AuthResourceContract
     /**
      * @const string
      */
-    private const PREFIX = '/auth';
+    private const string PREFIX = '/auth';
 
     /**
      * @const string
      */
-    private const ENDPOINT_CHECK = self::PREFIX.'/check';
+    private const string ENDPOINT_CHECK = self::PREFIX.'/check';
 
     /**
      * @const string
      */
-    private const ENDPOINT_GET_PERMISSIONS = '/auth'.'/permissions';
-
-    private Hub $hub;
+    private const string ENDPOINT_GET_PERMISSIONS = '/auth'.'/permissions';
 
     /**
      * AuthResource constructor.
      */
-    public function __construct(Hub $hub)
-    {
-        $this->hub = $hub;
-    }
+    public function __construct(private readonly Hub $hub) {}
 
     /**
      * Checks if the token passed by parameter or previously loaded in the ISS Service is valid.

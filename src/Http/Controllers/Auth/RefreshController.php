@@ -36,7 +36,7 @@ class RefreshController extends AuthController
             $jsonCache = $response->json();
             $jsonCache['expires_in_dt'] = now()->addSeconds($response->json('expires_in'));
             cache()->put(
-                md5($response->json('access_token')),
+                md5((string) $response->json('access_token')),
                 new HubOauthToken($jsonCache),
                 now()->addSeconds($response->json('expires_in'))
             );

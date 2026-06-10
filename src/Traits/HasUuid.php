@@ -10,7 +10,7 @@ trait HasUuid
     {
         parent::boot();
 
-        self::creating(function ($model) {
+        self::creating(function ($model): void {
             if (collect($model->getFillable())->filter(fn (string $columnName) => $columnName === 'uuid')->isNotEmpty()) {
                 $model->uuid = (string) Uuid::uuid4();
             }

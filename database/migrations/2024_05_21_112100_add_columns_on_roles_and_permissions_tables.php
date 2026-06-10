@@ -16,7 +16,7 @@ return new class extends Migration
         $role = app(config('permission.models.role'));
         $hubCompany = app(config('hub.model_company'));
 
-        Schema::table($role->getTable(), function (Blueprint $table) use ($hubCompany) {
+        Schema::table($role->getTable(), function (Blueprint $table) use ($hubCompany): void {
             $table->uuid('uuid')->unique();
             $table->string('description')->nullable();
             $table->foreignId('hub_company_id')->constrained($hubCompany->getTable())->cascadeOnDelete()->index('roles_hub_company_id_foreign');
@@ -34,7 +34,7 @@ return new class extends Migration
     {
         $role = app(config('permission.models.role'));
 
-        Schema::table($role->getTable(), function (Blueprint $table) {
+        Schema::table($role->getTable(), function (Blueprint $table): void {
             $table->dropColumn('uuid');
             $table->dropColumn('description');
             $table->dropForeign(['hub_company_id']);

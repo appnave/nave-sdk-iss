@@ -23,7 +23,7 @@ class Hub extends Factory
     /**
      * @const array
      */
-    private const DEFAULT_HEADERS = [
+    private const array DEFAULT_HEADERS = [
         'content-type' => 'application/json',
         'accept' => 'application/json',
         'User-Agent' => 'ISS v0.0.1-alpha',
@@ -32,22 +32,18 @@ class Hub extends Factory
     /**
      * @const array
      */
-    private const DEFAULT_OPTIONS = ['allow_redirects' => false];
+    private const array DEFAULT_OPTIONS = ['allow_redirects' => false];
 
     public string $baseUrl;
 
     public PendingRequest $request;
 
-    private ?string $token;
-
     /**
      * Hub constructor.
      */
-    public function __construct(?string $token = null)
+    public function __construct(private ?string $token = null)
     {
         parent::__construct();
-
-        $this->token = $token;
 
         $this->request = $this->prepareRequest();
     }

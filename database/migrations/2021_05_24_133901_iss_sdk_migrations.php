@@ -17,32 +17,32 @@ class IssSdkMigrations extends Migration
     public function up()
     {
         if (! Schema::hasColumns('users', ['hub_uuid'])) {
-            Schema::table('users', function (Blueprint $table) {
+            Schema::table('users', function (Blueprint $table): void {
                 $table->uuid('hub_uuid')->nullable()->after('id');
             });
         }
 
         if (! Schema::hasTable('hub_users')) {
-            Schema::create('hub_users', function (Blueprint $table) {
+            Schema::create('hub_users', function (Blueprint $table): void {
                 $table->bigInteger('user_id');
                 $table->char('token', 32);
             });
         }
 
         if (! Schema::hasColumns('hub_users', ['company_uuid', 'company_name'])) {
-            Schema::table('hub_users', function (Blueprint $table) {
+            Schema::table('hub_users', function (Blueprint $table): void {
                 $table->uuid('company_uuid')->nullable();
                 $table->string('company_name')->nullable();
             });
         }
 
         if (! Schema::hasColumns('hub_users', ['role_permissions'])) {
-            Schema::table('hub_users', function (Blueprint $table) {
+            Schema::table('hub_users', function (Blueprint $table): void {
                 $table->json('role_permissions')->nullable();
             });
         }
 
-        Schema::table('hub_users', function (Blueprint $table) {
+        Schema::table('hub_users', function (Blueprint $table): void {
             $table->timestamps();
             $table->softDeletes();
         });

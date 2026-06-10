@@ -22,7 +22,7 @@ class CallbackController extends AuthController
         $stateFromCache = cache()->pull("state.{$stateComplement}", '');
         $url = cache()->pull($stateFromCache);
 
-        if (! (strlen($stateFromCache) > 0 && $stateFromCache === $stateFromParam)) {
+        if (! (strlen((string) $stateFromCache) > 0 && $stateFromCache === $stateFromParam)) {
             throw new NotFoundHttpException(__('State is not valid'));
         }
 
@@ -41,7 +41,7 @@ class CallbackController extends AuthController
         $jsonCache = $response->json();
         $jsonCache['expires_in_dt'] = now()->addSeconds($response->json('expires_in'));
         cache()->put(
-            md5($response->json('access_token')),
+            md5((string) $response->json('access_token')),
             new HubOauthToken($jsonCache),
             now()->addSeconds($response->json('expires_in'))
         );

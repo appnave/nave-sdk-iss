@@ -15,7 +15,7 @@ return new class extends Migration
     {
         $positionModel = app(config('hub.model_position'));
         $companyModel = app(config('hub.model_company'));
-        Schema::create($positionModel->getTable(), function (Blueprint $table) use ($positionModel, $companyModel) {
+        Schema::create($positionModel->getTable(), function (Blueprint $table) use ($positionModel, $companyModel): void {
             $table->id();
             $table->string('name');
             $table->uuid('uuid')->unique();

@@ -66,16 +66,12 @@ trait HasCompanyLinks
 
     public function realEstateDevelopments(): Attribute
     {
-        return Attribute::get(function () {
-            return $this->user_company?->real_estate_developments ?? collect([]);
-        });
+        return Attribute::get(fn () => $this->user_company?->real_estate_developments ?? collect([]));
     }
 
     public function hasAllRealEstateDevelopments(): Attribute
     {
-        return Attribute::get(function () {
-            return $this->user_company?->has_all_real_estate_developments ?? false;
-        });
+        return Attribute::get(fn () => $this->user_company?->has_all_real_estate_developments ?? false);
     }
 
     public function getMainLinkedCompanies(): array
@@ -131,14 +127,10 @@ trait HasCompanyLinks
 
     public function companyPermissions(): Attribute
     {
-        return Attribute::get(function () {
-            return $this->user_companies->mapWithKeys(function ($userCompany) {
-                return [
-                    $userCompany->company->uuid => $userCompany->getAllPermissions()
-                        ->pluck('name'),
-                ];
-            });
-        })->shouldCache();
+        return Attribute::get(fn () => $this->user_companies->mapWithKeys(fn ($userCompany) => [
+            $userCompany->company->uuid => $userCompany->getAllPermissions()
+                ->pluck('name'),
+        ]))->shouldCache();
     }
 
     public function checkCompanyPermission(string $ability, array $models): bool
@@ -152,9 +144,7 @@ trait HasCompanyLinks
         }
 
         // Caso model for vazio deve olhar para qualquer permissão dentro dos models passados
-        return collect($this->company_permissions)->filter(function ($permissions, $key) use ($models) {
-            return in_array($key, $models);
-        })
+        return collect($this->company_permissions)->filter(fn ($permissions, $key) => in_array($key, $models))
             ->flatten(1)
             ->unique()
             ->contains($ability);

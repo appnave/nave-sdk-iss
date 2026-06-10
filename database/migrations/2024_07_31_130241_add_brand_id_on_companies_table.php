@@ -11,12 +11,12 @@ return new class extends Migration
         $brandModel = app(config('hub.model_brand'));
         $companyModel = app(config('hub.model_company'));
 
-        Schema::table($companyModel->getTable(), function (Blueprint $table) use ($brandModel, $companyModel) {
+        Schema::table($companyModel->getTable(), function (Blueprint $table) use ($brandModel, $companyModel): void {
             if (! Schema::hasColumn($companyModel->getTable(), 'main_company_id')) {
                 $table->foreignId('main_company_id')->nullable()->constrained($companyModel->getTable());
             }
 
-            $table->after('main_company_id', function ($table) use ($brandModel) {
+            $table->after('main_company_id', function ($table) use ($brandModel): void {
                 $table->foreignId('brand_id')->nullable()->constrained($brandModel->getTable());
             });
         });
@@ -25,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         $companyModel = app(config('hub.model_company'));
-        Schema::table($companyModel->getTable(), function (Blueprint $table) {
+        Schema::table($companyModel->getTable(), function (Blueprint $table): void {
             $table->dropForeign(['brand_id']);
             $table->dropColumn('brand_id');
         });

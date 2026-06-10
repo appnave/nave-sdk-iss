@@ -18,7 +18,7 @@ return new class extends Migration
         $positionModel = app(config('hub.model_position'));
         $companyModel = app(config('hub.model_company'));
 
-        Schema::create($userCompanyModel->getTable(), function (Blueprint $table) use ($userModel, $positionModel, $companyModel) {
+        Schema::create($userCompanyModel->getTable(), function (Blueprint $table) use ($userModel, $positionModel, $companyModel): void {
             $table->id();
             $table->uuid('uuid');
             $table->foreignId('user_id')->constrained($userModel->getTable())->cascadeOnDelete();

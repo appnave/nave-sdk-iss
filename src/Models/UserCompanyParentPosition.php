@@ -19,15 +19,17 @@ class UserCompanyParentPosition extends Model
 
     protected $guard_name = 'web';
 
+    #[\Override]
     public static function boot()
     {
         parent::boot();
 
-        self::creating(function ($model) {
+        self::creating(function ($model): void {
             $model->uuid = (string) Uuid::uuid4();
         });
     }
 
+    #[\Override]
     public function getRouteKeyName()
     {
         return 'uuid';

@@ -25,15 +25,15 @@ class AuthenticateHubMiddleware1
     /**
      * Token JWT.
      */
-    private ?string $bearerToken;
+    private ?string $bearerToken = null;
 
-    private AuthManager $authService;
+    private readonly AuthManager $authService;
 
-    private Repository $configService;
+    private readonly Repository $configService;
 
-    private CacheManager $cacheService;
+    private readonly CacheManager $cacheService;
 
-    private HubUser $hubUserModel;
+    private readonly HubUser $hubUserModel;
 
     /**
      * Hashing token with md5, that will be saved in the table 'hub_users'.
@@ -63,14 +63,14 @@ class AuthenticateHubMiddleware1
         try {
             $this->setToken($request);
 
-            $this->bearerTokenHash = md5($this->bearerToken);
+            $this->bearerTokenHash = md5((string) $this->bearerToken);
             $this->cacheKey = 'access_token_user_id_'.$this->bearerTokenHash;
 
             try {
                 $this->loginByCache();
 
                 $this->updatePermissions();
-            } catch (ModelNotFoundException $modelNotFoundException) {
+            } catch (ModelNotFoundException) {
                 try {
                     $apiUser = $this->getUser();
 
@@ -207,7 +207,7 @@ class AuthenticateHubMiddleware1
             $user = $userModel
                 ->whereEmail($apiUser->email)
                 ->where(
-                    function (Builder $builder) use ($apiUser) {
+                    function (Builder $builder) use ($apiUser): void {
                         $builder
                             ->where('hub_uuid', $apiUser->uuid)
                             ->orWhereNull('hub_uuid');
@@ -215,19 +215,19 @@ class AuthenticateHubMiddleware1
                 )->firstOrFail();
 
             $user->hub_uuid = $apiUser->uuid;
-        } catch (ModelNotFoundException $modelNotFoundException) {
+        } catch (ModelNotFoundException) {
             $user = new $userModel;
             $user->hub_uuid = $apiUser->uuid;
             $user->name = $apiUser->name;
             $user->email = $apiUser->email;
-            $user->password = bcrypt(uniqid(rand()));
+            $user->password = bcrypt(uniqid(random_int(0, mt_getrandmax())));
         }
 
         $hubCompany = $this->getCompany($apiUser->company);
         try {
             $company = $companyModel::where('uuid', '=', $apiUser->company)->firstOrFail();
             $company->name = $hubCompany->name;
-        } catch (ModelNotFoundException $modelNotFoundException) {
+        } catch (ModelNotFoundException) {
             $company = new $companyModel;
             $company->uuid = $hubCompany->uuid;
             $company->name = $hubCompany->name;

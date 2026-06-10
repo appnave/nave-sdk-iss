@@ -16,7 +16,7 @@ return new class extends Migration
         $userCompanyModel = app(config('hub.model_user_company'));
         $userCompanyRealEstateDevelopmentModel = app(config('hub.model_user_company_real_estate_development'));
 
-        Schema::create($userCompanyRealEstateDevelopmentModel->getTable(), function (Blueprint $table) use ($userCompanyModel) {
+        Schema::create($userCompanyRealEstateDevelopmentModel->getTable(), function (Blueprint $table) use ($userCompanyModel): void {
             $table->id();
             $table->foreignId('user_company_id')->constrained($userCompanyModel->getTable())->cascadeOnDelete()->index('hub_user_real_estate_developments_user_company_id_foreign');
             $table->uuid('real_estate_development_uuid');

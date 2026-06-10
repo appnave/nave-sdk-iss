@@ -2,6 +2,7 @@
 
 namespace BildVitta\Hub\Console;
 
+use BildVitta\Hub\Entities\HubUserCompany;
 use DB;
 use Illuminate\Console\Command;
 
@@ -37,7 +38,7 @@ class CleanPermissions extends Command
         DB::table('model_has_permissions')->delete();
 
         DB::table('model_has_roles')->whereNotIn('model_type', [
-            'model_type' => 'BildVitta\\Hub\\Entities\\HubUserCompany',
+            'model_type' => HubUserCompany::class,
         ])->delete();
     }
 }

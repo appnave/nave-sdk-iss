@@ -19,7 +19,7 @@ class InstallHub extends Command
      *
      * @const array
      */
-    private const VENDOR_PUBLISH_CONFIG_PARAMS = [
+    private const array VENDOR_PUBLISH_CONFIG_PARAMS = [
         '--provider' => HubServiceProvider::class,
         '--tag' => 'hub-config',
     ];
@@ -29,7 +29,7 @@ class InstallHub extends Command
      *
      * @const array
      */
-    private const VENDOR_PUBLISH_MIGRATION_PARAMS = [
+    private const array VENDOR_PUBLISH_MIGRATION_PARAMS = [
         '--provider' => PermissionServiceProvider::class,
     ];
 

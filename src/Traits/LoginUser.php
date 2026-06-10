@@ -28,7 +28,7 @@ trait LoginUser
             $apiUser = $this->getUser($bearerToken);
             $this->updateUserCompany($user, $apiUser);
             $this->updateUserPermissions($user, $apiUser);
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             $apiUser = $this->getUser($bearerToken);
             $user = $this->updateOrCreateUser($apiUser);
             $userId = $user->id;
@@ -60,7 +60,7 @@ trait LoginUser
             'name' => $apiUser->name,
             'remember_token' => Str::random(10),
             'email_verified_at' => Carbon::now(),
-            'password' => bcrypt(uniqid(rand())),
+            'password' => bcrypt(uniqid(random_int(0, mt_getrandmax()))),
         ]);
 
         if (property_exists($apiUser, 'is_superuser')) {
@@ -87,7 +87,7 @@ trait LoginUser
 
         try {
             $company = $companyModel::select('id')->where('uuid', '=', $apiUser->company)->firstOrFail();
-        } catch (ModelNotFoundException $modelNotFoundException) {
+        } catch (ModelNotFoundException) {
             $apiCompany = $this->getCompany($apiUser->company);
             $company = $companyModel::create([
                 'uuid' => $apiCompany->uuid,
@@ -169,7 +169,7 @@ trait LoginUser
             try {
                 $company = $companyModel::where('uuid', '=', $apiUser->company)->firstOrFail();
                 $company->name = $hubCompany->name;
-            } catch (ModelNotFoundException $modelNotFoundException) {
+            } catch (ModelNotFoundException) {
                 $company = new $companyModel;
                 $company->uuid = $hubCompany->uuid;
                 $company->name = $hubCompany->name;

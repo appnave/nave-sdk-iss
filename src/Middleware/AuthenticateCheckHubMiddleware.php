@@ -47,7 +47,7 @@ class AuthenticateCheckHubMiddleware extends AuthenticateHubHelpers
                 $this->throw(__('Unable to authenticate bearerToken.'));
             }
 
-            return json_decode($response->body());
+            return json_decode((string) $response->body());
         });
     }
 
@@ -55,9 +55,7 @@ class AuthenticateCheckHubMiddleware extends AuthenticateHubHelpers
     {
         $userModel = $this->app('config')->get('hub.model_user');
 
-        return Cache::remember($md5Token.'-user', 60 * 60, function () use ($userModel, $cache) {
-            return $userModel::whereHubUuid($cache->result->uuid)->first();
-        });
+        return Cache::remember($md5Token.'-user', 60 * 60, fn () => $userModel::whereHubUuid($cache->result->uuid)->first());
     }
 
     private function checkCredentials(string $token)

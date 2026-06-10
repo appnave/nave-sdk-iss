@@ -27,6 +27,7 @@ class HubServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    #[\Override]
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/hub.php', 'hub');
@@ -60,7 +61,7 @@ class HubServiceProvider extends ServiceProvider
 
         $this->registerRequestMacros();
 
-        $this->callAfterResolving(Gate::class, function (Gate $gate, Application $app) {
+        $this->callAfterResolving(Gate::class, function (Gate $gate, Application $app): void {
             $gate->before(function (Authenticatable $user, string $ability, array $args) {
                 if ($user->is_superuser) {
                     return true;
@@ -106,12 +107,8 @@ class HubServiceProvider extends ServiceProvider
 
     protected function registerRequestMacros()
     {
-        Request::macro('version', function () {
-            return config('hub.api_version');
-        });
+        Request::macro('version', fn () => config('hub.api_version'));
 
-        Request::macro('checkVersion', function ($version) {
-            return $this->version() === $version;
-        });
+        Request::macro('checkVersion', fn ($version) => $this->version() === $version);
     }
 }

@@ -15,7 +15,7 @@ class Hub extends Facade
     /**
      * @const string
      */
-    private const ACCESSOR = 'hub';
+    private const string ACCESSOR = 'hub';
 
     /**
      * Get the registered name of the component.
