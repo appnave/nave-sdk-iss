@@ -11,7 +11,7 @@ class MePatchController extends UsersController
 {
     public function __invoke(MePatchRequest $request)
     {
-        $token_uri = Config::get('hub.base_uri') . Config::get('hub.prefix') . Config::get('hub.oauth.userinfo_uri');
+        $token_uri = Config::get('hub.base_uri').Config::get('hub.prefix').Config::get('hub.oauth.userinfo_uri');
         $response = Http::acceptJson()
             ->withToken($bearerToken)
             ->patch(
