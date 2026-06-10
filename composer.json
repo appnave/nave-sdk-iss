@@ -1,20 +1,20 @@
 {
-  "name": "bildvitta/iss-sdk",
+  "name": "appnave/nave-sdk-iss",
   "description": "This package is used to communicate with the permission and authentication microservice.",
   "type": "library",
   "keywords": [
-    "bildvitta",
+    "appnave",
     "laravel",
     "hub",
-    "iss-sdk"
+    "nave-sdk-iss"
   ],
-  "homepage": "https://github.com/bildvitta/iss-sdk",
+  "homepage": "https://github.com/appnave/nave-sdk-iss",
   "license": "MIT",
   "authors": [
     {
-      "name": "Jean C. Garcia",
-      "email": "jean.garcia@bild.com.br",
-      "role": "Developer"
+      "name": "App Nave",
+      "email": "contato@nave.app.br",
+      "role": "Owner"
     }
   ],
   "require": {
