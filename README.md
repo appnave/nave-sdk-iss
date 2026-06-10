@@ -1,6 +1,6 @@
 # ISS SDK
 
-Pacote Laravel para integrar a aplicação ao Hub de autenticação, permissões, usuários, empresas e notificações.
+Pacote Laravel privado para integrar a aplicação ao Hub de autenticação, permissões, usuários, empresas e notificações.
 
 ## Visão geral
 
@@ -11,17 +11,33 @@ Pacote Laravel para integrar a aplicação ao Hub de autenticação, permissões
 
 ## Requisitos
 
-- PHP `^7.4` até `^8.3`
+- PHP `^8.0` até `^8.3`
 - Laravel compatível com `illuminate/contracts` `^8` até `^12`
 - `spatie/laravel-permission`
 - `ably/ably-php` para notificações
-- Acesso ao Hub configurado no ambiente da aplicação
 
 ## Acesso a repositórios privados
 
-Este pacote não declara dependências privadas adicionais no `composer.json`.
+Este pacote é distribuído como repositório privado via VCS. Nos projetos Laravel consumidores, adicione o repositório no `composer.json`:
 
-Se o projeto consumidor precisar acessar repositórios privados da organização, autentique o Composer localmente:
+```json
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/appnave/nave-sdk-iss"
+    }
+  ]
+}
+```
+
+Depois, instale o pacote normalmente:
+
+```bash
+composer require appnave/nave-sdk-iss
+```
+
+Se o Composer precisar de autenticação para acessar o GitHub, configure um token localmente:
 
 ```bash
 composer config -g github-oauth.github.com <SEU_TOKEN>
