@@ -1,321 +1,128 @@
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/bildvitta/iss-sdk.svg?style=flat-square)](https://packagist.org/packages/bildvitta/iss-sdk)
-[![Total Downloads](https://img.shields.io/packagist/dt/bildvitta/iss-sdk.svg?style=flat-square)](https://packagist.org/packages/bildvitta/iss-sdk)
+# ISS SDK
 
-# Introduction
+Pacote Laravel privado para integrar a aplicação ao Hub de autenticação, permissões, usuários, empresas e notificações.
 
-The ISS (International Space Station) aims to be a space station (`client`) of connection between the microservices of
-its ecosystem and the authentication and permissions microservice of the user that here is called in the script as
-Hub.permissions modules / microservices (Hub)
+## Visão geral
 
-# Installation
+- Consome o Hub via `Illuminate\Http\Client`.
+- Registra o facade `hub` e os middlewares `hub.auth`, `hub.check` e `hub.programmatic`.
+- Inclui o trait `HasCompanyLinks` para o model `User`.
+- Inclui o `PermissionScope` para filtros por permissão.
 
-You can install the package via composer:
+## Requisitos
 
-```bash
-composer require bildvitta/iss-sdk:dev-develop
+- PHP `^8.0` até `^8.3`
+- Laravel compatível com `illuminate/contracts` `^8` até `^12`
+- `spatie/laravel-permission`
+- `ably/ably-php` para notificações
+
+## Acesso a repositórios privados
+
+Este pacote é distribuído como repositório privado via VCS. Nos projetos Laravel consumidores, adicione o repositório no `composer.json`:
+
+```json
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/appnave/nave-sdk-iss"
+    }
+  ]
+}
 ```
 
-For everything to work perfectly in addition to having the settings file published in your application, run the command
-below:
+Depois, instale o pacote normalmente:
 
 ```bash
+composer require appnave/nave-sdk-iss
+```
+
+Se o Composer precisar de autenticação para acessar o GitHub, configure um token localmente:
+
+```bash
+composer config -g github-oauth.github.com <SEU_TOKEN>
+```
+
+No GitHub Actions, exponha o token como secret e passe `COMPOSER_AUTH`:
+
+```yaml
+env:
+  COMPOSER_AUTH: >
+    {"github-oauth":{"github.com":"${{ secrets.COMPOSER_GITHUB_TOKEN }}"}}
+```
+
+## Instalação local
+
+```bash
+composer require appnave/nave-sdk-iss
 php artisan hub:install
 ```
 
-# Configuration
+Esse comando publica `config/hub.php`, pode publicar as migrations do Spatie e executa `migrate`.
 
-This is the contents of the published config file:
-
-```php
-return [
-    'base_uri' => env('MS_HUB_BASE_URI', 'https://api-dev-hub.nave.dev'),
-
-    'front_uri' => env('MS_HUB_FRONT_URI', 'https://develop.hub.nave.dev'),
-
-    'prefix' => env('MS_HUB_API_PREFIX', '/api'),
-
-    'model_user' => '\App\Entities\User',
-
-    'model_company' => '\BildVitta\Hub\Entities\HubCompany::class',
-
-    'programatic_access' => [
-        'client_id' => env('HUB_PROGRAMMATIC_CLIENT'),
-        'client_secret' => env('HUB_PROGRAMMATIC_SECRET')
-    ],
-
-    'oauth' => [
-        'client_id' => env('HUB_CLIENT_ID', ''),
-        'client_secret' => env('HUB_CLIENT_SECRET', ''),
-        'redirect' => env('HUB_REDIRECT_URI', ''),
-        'scopes' => env('HUB_SCOPE', 'profile'),
-
-        'authorize_uri' => '/auth/authorize',
-        'token_uri' => '/oauth/token',
-        'userinfo_uri' => '/users/me'
-    ]
-];
-```
-
-With the configuration file `` hub.php`` published in your configuration folder it is necessary to create environment
-variables in your `` .env`` file:
+Variáveis mais usadas:
 
 ```dotenv
-MS_HUB_BASE_URI="https://api-dev-hub.nave.dev"
+MS_HUB_BASE_URI="https://hub-server.nave.dev.br"
+MS_HUB_FRONT_URI="https://hub.nave.dev.br"
+MS_HUB_API_PREFIX="/api"
+MS_HUB_API_VERSION="1"
 
-MS_HUB_PREFIX="/api"
+HUB_PROGRAMMATIC_CLIENT=
+HUB_PROGRAMMATIC_SECRET=
+
+HUB_CLIENT_ID=
+HUB_CLIENT_SECRET=
+HUB_REDIRECT_URI=
+HUB_SCOPE=profile
+
+MS_HUB_DB_HOST=
+MS_HUB_DB_PORT=
+MS_HUB_DB_DATABASE=
+MS_HUB_DB_USERNAME=
+MS_HUB_DB_PASSWORD=
 ```
 
-## Change permission and role model from spatie/laravel-permissions
+Se for usar notificações:
 
-You should change the default spatie/laravel-permissions models to ours, as we have some substantial changes to the use of Role and Permission.
-
-```php
-// config/permission.php
-
-return [
-    'models' = [
-        'permission' => \BildVitta\Hub\Entities\HubPermission::class,
-        'role' => \BildVitta\Hub\Entities\HubRole::class,
-    ]
-];
-```
-
-If you already have a change to these models, just extend our classes to have the correct functionalities.
-
-## Add Trait on User Model
-
-And remember to add the `BildVitta\Hub\Traits\User\HasCompanyLinks` Trait in the Users model.
-
-```php
-// \App\Models\User
-
-use BildVitta\Hub\Traits\User\HasCompanyLinks;
-
-class User extends Authenticatable
-{
-    use HasCompanyLinks;
-    ...
-}
-```
-
-Remembering that this trait already has `Spatie\Permission\Traits\HasRoles` by default, so you can remove the `Spatie\Permission\Traits\HasRoles` trait from your user model.
-
-# Usage
-
-All requests made to the ISS Service will return an instance
-of [``\Illuminate\Http\Client\Response``](https://laravel.com/api/8.x/Illuminate/Http/Client/Response.html), which
-implements the PHP `` ArrayAccess`` interface, allowing you to access JSON response data directly in the response
-
-This also means that a variety of methods that can be used to inspect the response, follow some below:
-
-````php
-$response = Hub::setToken('jwt')->auth()->permissions();
-
-$response->body(); // string;
-$response->json(); // array|mixed;
-$response->collect(); // Illuminate\Support\Collection;
-$response->status(); // int;
-$response->ok(); // bool;
-$response->successful(); // bool;
-$response->failed(); // bool;
-$response->serverError(); // bool;
-$response->clientError(); // bool;
-$response->header('content-type'); // string;
-$response->headers(); // array;
-````
-
-## Initialize ISS Service.
-
-As there are several ways to program, there are also several ways to start the ISS Service.
-
-Below are some ways to start the Service.
-
-```php
-$token = 'jwt';
-
-$hub = app('hub', [$token]); // instance 2
-$hub = app('hub')->setToken($token); // instance 1
-$hub = new \BildVitta\Hub\Hub($token); // instance 3
-$hub = (new \BildVitta\Hub\Hub())->setToken($token); // instance 4
-$hub = BildVitta\Hub\Facades\Hub::setToken($token); // instance 1
-
-```
-
-## Authenticating User
-
-To authenticate the Hub user in your module, it is necessary to use the
-middleware `hub.auth = \ BildVitta \ Hub \ Middleware \ AuthenticateHubMiddleware`.
-
-It will validate the token and create, if it does not exist, the user of the token in its user table.
-
-````php
-Route::middleware('hub.auth')->get('/users/me', function () {
-    return auth()->user()->toArray();
-});
-````
-
-When we installed the package, we created the `hub_uuid` column in your user table.
-
-Tf it is not possible to authenticate, the middleware will return 401.
-
-## User Authenticated
-
-To access the token's user data directly, there is the ``\BildVitta\Hub\Contracts\Resources\AuthResourceContract``
-interface
-
-### Check Token
-
-It is verified whether the token passed by parameter or previously loaded in the ISS Service is valid.
-
-Example of use:
-
-```php
-try {
-    Hub::auth()->check('jwt');
-} catch (RequestException $requestException) {
-    throw new Exception('invalid token');
-}
-```
-
-### Get Permissions
-
-It is possible to obtain ALL the permissions of the token uploaded to the ISS Service.
-
-Example of use:
-
-```php
-try {
-    $permissions = Hub::setToken('jwt')->auth()->permissions()['results']; // Implements `ArrayAccess`
-    
-    foreach ($permissions as $permission) {
-        #TODO
-    }
-} catch (RequestException $requestException) {
-    #TODO
-}
-```
-
-### Adding permission scope to entity listing.
-
-Now we have added a scope that filters by the permission level of the logged in user. To use it is very simple, just add
-in the global scopes the PermissionScope class passing the permission that the user has to have, and then the magic
-happens ;D
-
-Code example:
-
-```php
-use BildVitta\Hub\Scopes\PermissionScope;
-
-$query = RealEstateDevelopment::query();
-$query->withGlobalScope('permission', new PermissionScope('real_estate_developments.show'));
-
-$count = $query->count();
-$query->pagination();
-
-return (new RealEstateDevelopmentResource('index', $query->get()))->count($count);
-```
-
-Remembering that the scope name has to be permission, if not, it doesn't work <3
-
-### Notifications
-
-> Make sure the BroadcastServiceProvider is enabled in `config/app.php`
-
-Add the `ABLY_KEY` key as an environment variable (ask your coordinator for this key)
-
-```env
-ABLY_KEY=your-ably-key
-```
-
-Then, set the BROADCAST_CONNECTION environment variable to ably in your application's .env file:
-
-```env
+```dotenv
+ABLY_KEY=
 BROADCAST_CONNECTION=ably
 ```
 
-Check the `routes/channels.php` file if the private channel authentication route is correct.
+## Comandos úteis
 
-```php
-use Illuminate\Support\Facades\Broadcast;
-
-Broadcast::channel('notifications.{uuid}', function ($user, $uuid) {
-    return (string) $user->uuid === (string) $uuid;
-});
+```bash
+php artisan hub:install
+php artisan hub:clean-permissions
+composer check-style
+composer fix-style
+php artisan vendor:publish --provider="BildVitta\Hub\HubServiceProvider" --tag=hub-config
 ```
 
-Ensure that the $user->uuid is the same as that used in the hub, otherwise it may result in a 403 in this private channel authentication api.
+## Documentação da API
 
-To finish, go to the BroadcastServiceProvider file and change it to this code.
+Não há Swagger/OpenAPI neste repositório.
 
-```php
-Broadcast::routes([
-    'middleware' => ['hub.check'],
-    'prefix' => 'api',
-]);
-```
+As rotas publicadas pelo pacote estão em `routes/api.php`:
 
-Ensure that the $user->uuid is the same as that used in the hub, otherwise it may result in a 403 in this private channel authentication api.
+- `GET /api/auth/login`
+- `GET /api/auth/callback`
+- `GET /api/auth/logout`
+- `GET /api/auth/refresh`
+- `GET /api/users/me`
+- `PATCH /api/users/me`
+- `GET /api/users/me/edit`
+- `GET /api/users/me/notifications`
+- `PATCH /api/users/me/notifications`
 
-To finish, go to the BroadcastServiceProvider file and change it to this code.
+## Convenções do projeto
 
-```php
-Broadcast::routes([
-    'middleware' => ['hub.check'],
-    'prefix' => 'api',
-]);
-```
-
-## New Per-Company Permissioning (v2)
-
-To use the new permissioning method, you must follow these steps and make the necessary changes for the reality of each project.
-
-First, in the `config/permissions.php` file you must change the `register_permission_check_method` attribute from true to false, as we will control the permissioning method manually.
-
-Example:
-```php
-// config/permission.php
-return [
-    ...
-    'register_permission_check_method' => false
-    ...
-];
-```
-
-After leaving it as false, in requests or policies the following change must be made (if applicable) to the `->can` method that exists within the user (or the model that extends `HasRoles` or `HasPermissions`)
-
-If the permission for the screen in question needs to be per company, you must pass the company's `uuid` as the second parameter of the `can()` method. Example:
-
-```php
-$user->can('users.show', 'company-uuid');
-```
-
-The code above will check if the 'users.show' permission exists within the company passed as a parameter. If it does, it returns true, otherwise false.
-
-If you have screens that do not require permission per company, but cases where, if the person has permission regardless of the link, just leave the `can()` method as it is, for example:
-
-```php
-$user->can('users.show');
-```
-
-In the code above, it will search for this permission in any of the user's existing links, if found it returns true otherwise false.
-
-## Testing
-
-coming soon...
-
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Credits
-
-- [Jean C. Garcia](https://github.com/SOSTheBlack)
-- [All Contributors](../../contributors)
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+- Em `config/permission.php`, use os models `\BildVitta\Hub\Entities\HubPermission` e `\BildVitta\Hub\Entities\HubRole` quando precisar alinhar o Spatie ao Hub.
+- No model `User`, adicione `\BildVitta\Hub\Traits\User\HasCompanyLinks`; o trait já inclui `HasRoles`.
+- Use o middleware `hub.auth` para autenticação do token e criação do usuário local quando necessário.
+- Use o middleware `hub.check` nas rotas que exigem token válido.
+- Use o middleware `hub.programmatic` quando a aplicação precisar obter token via client credentials.
+- Para filtros por permissão em queries, use `\BildVitta\Hub\Scopes\PermissionScope`.
+- Para notificações privadas, habilite o `BroadcastServiceProvider`, configure o canal `notifications.{uuid}` em `routes/channels.php` e use `Broadcast::routes(['middleware' => ['hub.check'], 'prefix' => 'api']);`.
+- A fonte de verdade para `base_uri`, `front_uri`, `prefix` e credenciais está em `config/hub.php`.
