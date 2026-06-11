@@ -68,4 +68,9 @@ class Company extends Model
     {
         return $this->belongsTo(Brand::class, 'brand_id', 'id');
     }
+
+    public function services(): HasMany
+    {
+        return $this->hasMany(Services::class);
+    }
 }
