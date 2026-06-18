@@ -85,6 +85,11 @@ class Services extends Model
         return $this->belongsToMany(EnvironmentVariable::class);
     }
 
+    public function service_type(): BelongsTo
+    {
+        return $this->belongsTo(ServiceTypes::class);
+    }
+
     public function getCredentials(): SupportCollection
     {
         return $this->environment_variables
