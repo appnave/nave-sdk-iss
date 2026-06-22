@@ -57,4 +57,5 @@ return [
         'password' => env('MS_HUB_DB_PASSWORD'),
     ],
 
+    'credential_cache_ttl' => env('MS_HUB_CREDENTIAL_CACHE_TTL', 28_800),
 ];
