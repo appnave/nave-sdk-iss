@@ -15,9 +15,8 @@ class MeController extends UsersController
             'project' => Config::get('app.slug', ''),
         ];
         $token_uri = Config::get('hub.base_uri').Config::get('hub.prefix').Config::get('hub.oauth.userinfo_uri').'?'.http_build_query($params);
-        $bearerToken = $request->bearerToken();
         $response = Http::acceptJson()
-            ->withToken($bearerToken)
+            ->withToken($request->bearerToken())
             ->get($token_uri);
 
         return new Response($response, $response->status());
