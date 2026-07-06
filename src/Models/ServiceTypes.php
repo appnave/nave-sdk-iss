@@ -54,7 +54,7 @@ class ServiceTypes extends Model
     {
         parent::boot();
 
-        static::creating(function (Services $model) {
+        static::creating(function (ServiceTypes $model) {
             $model->uuid = Str::uuid()->toString();
         });
     }
