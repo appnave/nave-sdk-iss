@@ -11,68 +11,6 @@ Pacote Laravel privado para integrar a aplicação ao Hub de autenticação, per
 
 ## Requisitos
 
-```bash
-composer require bildvitta/iss-sdk:dev-develop
-```
-
-For everything to work perfectly in addition to having the settings file published in your application, run the command
-below:
-
-```bash
-php artisan hub:install
-```
-
-# Configuration
-
-This is the contents of the published config file:
-
-```php
-return [
-    'environment_variable_key' => env('ENVIRONMENT_VARIABLE_KEY'),
-    
-    'base_uri' => env('MS_HUB_BASE_URI', 'https://api-dev-hub.nave.dev'),
-
-    'front_uri' => env('MS_HUB_FRONT_URI', 'https://develop.hub.nave.dev'),
-
-    'prefix' => env('MS_HUB_API_PREFIX', '/api'),
-
-    'model_user' => '\App\Entities\User',
-
-    'model_company' => '\BildVitta\Hub\Entities\HubCompany::class',
-
-    'programatic_access' => [
-        'client_id' => env('HUB_PROGRAMMATIC_CLIENT'),
-        'client_secret' => env('HUB_PROGRAMMATIC_SECRET')
-    ],
-
-    'oauth' => [
-        'client_id' => env('HUB_CLIENT_ID', ''),
-        'client_secret' => env('HUB_CLIENT_SECRET', ''),
-        'redirect' => env('HUB_REDIRECT_URI', ''),
-        'scopes' => env('HUB_SCOPE', 'profile'),
-
-        'authorize_uri' => '/auth/authorize',
-        'token_uri' => '/oauth/token',
-        'userinfo_uri' => '/users/me'
-    ]
-];
-```
-
-With the configuration file `` hub.php`` published in your configuration folder it is necessary to create environment
-variables in your `` .env`` file:
-
-```dotenv
-MS_HUB_BASE_URI="https://api-dev-hub.nave.dev"
-
-MS_HUB_PREFIX="/api"
-```
-
-## Change permission and role model from spatie/laravel-permissions
-
-You should change the default spatie/laravel-permissions models to ours, as we have some substantial changes to the use of Role and Permission.
-
-```php
-// config/permission.php
 - PHP `^8.0` até `^8.3`
 - Laravel compatível com `illuminate/contracts` `^8` até `^12`
 - `spatie/laravel-permission`
@@ -125,6 +63,7 @@ Esse comando publica `config/hub.php`, pode publicar as migrations do Spatie e e
 Variáveis mais usadas:
 
 ```dotenv
+ENVIRONMENT_VARIABLE_KEY=
 MS_HUB_BASE_URI="https://hub-server.nave.dev.br"
 MS_HUB_FRONT_URI="https://hub.nave.dev.br"
 MS_HUB_API_PREFIX="/api"
