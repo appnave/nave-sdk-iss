@@ -11,15 +11,20 @@ class MePatchController extends UsersController
 {
     public function __invoke(MePatchRequest $request)
     {
-        $token_uri = Config::get('hub.base_uri') . Config::get('hub.prefix') . Config::get('hub.oauth.userinfo_uri');
+        $data = [];
+        if ($request->filled('companies')) {
+            $data['companies'] = $request->input('companies');
+        }
+        if ($request->filled('current_main_company')) {
+            $data['current_main_company'] = $request->input('current_main_company');
+        }
+
+        $token_uri = Config::get('hub.base_uri').Config::get('hub.prefix').Config::get('hub.oauth.userinfo_uri');
         $response = Http::acceptJson()
-            ->withToken($bearerToken)
+            ->withToken($request->bearerToken())
             ->patch(
                 $token_uri,
-                [
-                    'companies' => $request->input('companies'),
-                    'current_main_company' => $request->input('current_main_company'),
-                ]
+                $data
             );
 
         return new Response($response->body(), $response->status());
