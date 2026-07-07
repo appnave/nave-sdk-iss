@@ -28,6 +28,8 @@ This is the contents of the published config file:
 
 ```php
 return [
+    'environment_variable_key' => env('ENVIRONMENT_VARIABLE_KEY'),
+    
     'base_uri' => env('MS_HUB_BASE_URI', 'https://api-dev-hub.nave.dev'),
 
     'front_uri' => env('MS_HUB_FRONT_URI', 'https://develop.hub.nave.dev'),
