@@ -6,6 +6,7 @@ use BildVitta\Hub\Traits\UsesHubDB;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
@@ -82,5 +83,10 @@ class EnvironmentVariable extends Model
     public function environment_variable_data(): HasMany
     {
         return $this->hasMany(EnvironmentVariableData::class);
+    }
+
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Services::class);
     }
 }
