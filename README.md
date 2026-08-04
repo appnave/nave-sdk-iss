@@ -63,6 +63,7 @@ Esse comando publica `config/hub.php`, pode publicar as migrations do Spatie e e
 Variáveis mais usadas:
 
 ```dotenv
+ENVIRONMENT_VARIABLE_KEY=
 MS_HUB_BASE_URI="https://hub-server.nave.dev.br"
 MS_HUB_FRONT_URI="https://hub.nave.dev.br"
 MS_HUB_API_PREFIX="/api"

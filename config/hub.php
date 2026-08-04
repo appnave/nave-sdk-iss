@@ -9,6 +9,8 @@ use BildVitta\Hub\Entities\HubUserCompanyParentPosition;
 use BildVitta\Hub\Entities\HubUserCompanyRealEstateDevelopment;
 
 return [
+    'environment_variable_key' => env('ENVIRONMENT_VARIABLE_KEY'),
+
     'base_uri' => env('MS_HUB_BASE_URI', 'https://hub-server.nave.dev.br'),
 
     'front_uri' => env('MS_HUB_FRONT_URI', 'https://hub.nave.dev.br'),
@@ -55,4 +57,5 @@ return [
         'password' => env('MS_HUB_DB_PASSWORD'),
     ],
 
+    'credential_cache_ttl' => env('MS_HUB_CREDENTIAL_CACHE_TTL', 28_800),
 ];
