@@ -9,26 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Ramsey\Uuid\Uuid;
 
-class User extends Model
+class UserBankingCorrespondent extends Model
 {
     use SoftDeletes;
     use UsesHubDB;
 
     protected $connection = 'iss-sdk';
 
-    protected $table = 'users';
+    protected $table = 'user_banking_correspondents';
 
     protected $guard_name = 'web';
-
-    public const TYPE_LIST = [
-        'cpf' => 'Pessoa física',
-        'cnpj' => 'Pessoa jurídica',
-    ];
-
-    public const KIND_LIST = [
-        'self_employed' => 'Autônomo',
-        'employee' => 'Colaborador',
-    ];
 
     public static function boot()
     {
@@ -51,13 +41,8 @@ class User extends Model
         return $this->belongsTo(Company::class, 'company_id', 'id');
     }
 
-    public function user_companies(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(UserCompany::class, 'user_id', 'id');
-    }
-
-    public function user_banking_correspondents(): HasMany
-    {
-        return $this->hasMany(UserBankingCorrespondent::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

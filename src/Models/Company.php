@@ -64,6 +64,11 @@ class Company extends Model
         return $this->hasMany(UserCompany::class, 'company_id', 'id');
     }
 
+    public function user_banking_correspondents(): HasMany
+    {
+        return $this->hasMany(UserBankingCorrespondent::class, 'company_id', 'id');
+    }
+
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class, 'brand_id', 'id');
