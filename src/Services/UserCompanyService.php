@@ -2,6 +2,7 @@
 
 namespace BildVitta\Hub\Services;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 
 class UserCompanyService
@@ -241,13 +242,26 @@ class UserCompanyService
      * @return User
      */
     public static function getUsersByCompanyUuidAndPositionOrder(
-        $companyUuid,
-        $positionOrder,
-        $filter = ['is_active' => 1],
-        $attributes = ['uuid', 'name', 'is_active'],
-        $withHubCompanyTrash = false
+        string $companyUuid,
+        int|array $positionOrder,
+        array $filter = ['is_active' => 1],
+        array $attributes = ['uuid', 'name', 'is_active'],
+        bool $withHubCompanyTrash = false
     ) {
-        $cacheKey = "UCS-UsersByCompanyUuidAndPositionOrder-{$companyUuid}-{$positionOrder}-filter-".implode('-', $filter).'-attributes-'.implode('-', $attributes);
+        $positionOrder = Arr::wrap($positionOrder);
+
+        $cacheKeyParts = [
+            'UCS',
+            'UsersByCompanyUuidAndPositionOrder',
+            $companyUuid,
+            implode('-', $positionOrder),
+            'filter',
+            implode('-', $filter),
+            'attributes',
+            implode('-', $attributes),
+        ];
+
+        $cacheKey = implode('-', $cacheKeyParts);
 
         if (Cache::tags(['UserCompanyService', "Company-$companyUuid"])->has($cacheKey)) {
             return Cache::tags(['UserCompanyService', "Company-$companyUuid"])->get($cacheKey);
@@ -264,7 +278,9 @@ class UserCompanyService
             return collect([]);
         }
 
-        $position = self::getSortedPositions($companyUuid)[$positionOrder];
+        $positions = collect(self::getSortedPositions($companyUuid))
+            ->whereIn('position_order', $positionOrder)
+            ->pluck('id');
 
         $userCompanyModel = app(config('hub.model_user_company'));
         $userModel = app(config('hub.model_user'));
@@ -279,7 +295,7 @@ class UserCompanyService
 
         $users = $userModel::join($tableUserCompany, "{$tableUserCompany}.user_id", "{$tableUser}.id")
             ->where("{$tableUserCompany}.company_id", $company->id)
-            ->where("{$tableUserCompany}.position_id", $position['id'])
+            ->whereIn("{$tableUserCompany}.position_id", $positions)
             ->when(! $withHubCompanyTrash, function ($query) use ($tableUserCompany) {
                 $query->whereNull("{$tableUserCompany}.deleted_at");
             })
@@ -334,6 +350,7 @@ class UserCompanyService
         }
 
         foreach ($positions as $key => $position) {
+            $position['position_order'] = $key;
             if (! $position['parent_position_id']) {
                 self::$positions[] = $position;
                 unset($positions[$key]);
@@ -342,6 +359,7 @@ class UserCompanyService
 
         foreach ($positions as $key => $position) {
             $lastPosition = end(self::$positions);
+            $position['position_order'] = $key;
             if ($position['parent_position_id'] == $lastPosition['id']) {
                 self::$positions[] = $position;
                 unset($positions[$key]);
