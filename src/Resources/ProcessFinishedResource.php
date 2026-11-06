@@ -9,8 +9,6 @@ class ProcessFinishedResource extends Resource
 {
     private const ENDPOINT = 'programmatic/process-finished';
 
-    private const LISTENER_ENDPOINT = 'programmatic/process-finished/listeners';
-
     private Hub $hub;
 
     public function __construct(Hub $hub)
@@ -19,30 +17,16 @@ class ProcessFinishedResource extends Resource
     }
 
     public function send(
-        string $userUuid,
+        array $userUuids,
         string $identifier,
         bool $isSuccessful = true,
     ): Response {
         $args = [
-            'user_uuid' => $userUuid,
+            'user_uuids' => $userUuids,
             'identifier' => $identifier,
             'is_successful' => $isSuccessful,
         ];
-        $endpoint = self::ENDPOINT;
 
-        return $this->hub->request->post($endpoint, $args)
-            ->throw();
-    }
-
-    public function addListener(string $userUuid, string $identifier): Response
-    {
-        $args = [
-            'user_uuid' => $userUuid,
-            'identifier' => $identifier,
-        ];
-        $endpoint = self::LISTENER_ENDPOINT;
-
-        return $this->hub->request->post($endpoint, $args)
-            ->throw();
+        return $this->hub->request->post(self::ENDPOINT, $args);
     }
 }
