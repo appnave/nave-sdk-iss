@@ -7,7 +7,9 @@ use Illuminate\Http\Client\Response;
 
 class ProcessFinishedResource extends Resource
 {
-    private const PREFIX = 'programmatic/process-finished';
+    private const ENDPOINT = 'programmatic/process-finished';
+
+    private const LISTENER_ENDPOINT = 'programmatic/process-finished/listeners';
 
     private Hub $hub;
 
@@ -26,7 +28,19 @@ class ProcessFinishedResource extends Resource
             'identifier' => $identifier,
             'is_successful' => $isSuccessful,
         ];
-        $endpoint = self::PREFIX;
+        $endpoint = self::ENDPOINT;
+
+        return $this->hub->request->post($endpoint, $args)
+            ->throw();
+    }
+
+    public function addListener(string $userUuid, string $identifier): Response
+    {
+        $args = [
+            'user_uuid' => $userUuid,
+            'identifier' => $identifier,
+        ];
+        $endpoint = self::LISTENER_ENDPOINT;
 
         return $this->hub->request->post($endpoint, $args)
             ->throw();
