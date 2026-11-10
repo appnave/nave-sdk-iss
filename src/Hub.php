@@ -5,6 +5,7 @@ namespace BildVitta\Hub;
 use BildVitta\Hub\Resources\AuthResource;
 use BildVitta\Hub\Resources\CompanyResource;
 use BildVitta\Hub\Resources\NotificationResource;
+use BildVitta\Hub\Resources\ProcessFinishedResource;
 use BildVitta\Hub\Resources\UserResource;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
@@ -80,6 +81,11 @@ class Hub extends Factory
     public function notifications(): NotificationResource
     {
         return new NotificationResource($this);
+    }
+
+    public function processFinished(): ProcessFinishedResource
+    {
+        return new ProcessFinishedResource($this);
     }
 
     public function setToken(?string $token = null, bool $programmatic = false): Hub
